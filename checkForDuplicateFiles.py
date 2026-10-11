@@ -1,15 +1,16 @@
 import os
 import hashlib
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 
 drives = [
     r""
 ]
 
 filesChecked = {}
-
 print("Scanning drives...")
-for drive in drives:
+
+def check_drive(drive:str) -> None:
     print(f"Checking {drive}")
     for root, subFolders, files in os.walk(drive):
         for file in files:
@@ -19,6 +20,11 @@ for drive in drives:
                 filesChecked[file] = array
             else:
                 filesChecked[file] = [f"{root}/{file}"]
+    print(f"Done checking {drive}")
+
+
+with ThreadPoolExecutor(max_workers=5) as executor:
+    executor.map(check_drive, drives)
 
 print("""Done scanning drives.
 Saving progress...""")
