@@ -3,7 +3,7 @@ import hashlib
 from collections import Counter
 
 drives = [
-    r"",
+    r""
 ]
 
 filesChecked = {}
@@ -14,14 +14,17 @@ for drive in drives:
     for root, subFolders, files in os.walk(drive):
         for file in files:
             if file in filesChecked:
-                print(f"\nDuplicate '{file}' - '{root}/{file}'\n")
                 array = filesChecked[file]
                 array.append(f"{root}/{file}")
                 filesChecked[file] = array
             else:
                 filesChecked[file] = [f"{root}/{file}"]
 
-print("""Done scanning drives.""")
+print("""Done scanning drives.
+Saving progress...""")
+
+with open("filesCheckedDict.txt","w") as file:
+    file.write(str(filesChecked))
 
 print("""Saved.
 Scanning files with duplicate names...""")
@@ -39,7 +42,13 @@ for key,value in hashes.items():
     if count_dict[value] > 1:
         duplicates[key] = value
 
-print("Sorting into duplicated files...")
+print("Saving progress...")
+
+with open("duplicatesDict.txt","w") as file:
+    file.write(str(duplicates))
+
+print("""Saved.
+Sorting into duplicated files...""")
 
 sorted_duplicates = {}
 for path,fileHash in duplicates.items():
@@ -56,8 +65,8 @@ Writing results to file...""")
 
 file_contents = """"""
 for key,value in sorted_duplicates.items():
-    print(f"\n{key}\n==============================\n{'\n'.join(value)}")
-    file_contents += f"{key}\n==============================\n{'\n'.join(value)}\n\n"
+    print("\n"+str(key)+"\n==============================\n"+str('\n'.join(value)))
+    file_contents += str(key)+f"\n==============================\n"+str('\n'.join(value))+"\n\n"
 
 with open("Duplicate Files.txt",'w') as file:
     file.write(file_contents.strip())
